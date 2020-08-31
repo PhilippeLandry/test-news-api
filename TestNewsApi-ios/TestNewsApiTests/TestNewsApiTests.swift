@@ -7,28 +7,26 @@
 //
 
 import XCTest
+import RxSwift
 @testable import TestNewsApi
 
 class TestNewsApiTests: XCTestCase {
-
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    private let disposeBag = DisposeBag()
+   
+    func testArticleCount() throws {
+        let expectation = self.expectation(description: "fetch posts")
+        ArticleProvider.shared.articles.asObservable()
+                      .subscribe(onNext: { _ in
+                        if ArticleProvider.shared.articles.value.count == 20 {
+                                XCTAssert(true, "Pass")
+                                expectation.fulfill()
+                        }
+                      })
+                      .disposed(by: disposeBag)
+               
+        self.waitForExpectations(timeout: 15.0, handler: nil)
     }
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
+    
 
 }
