@@ -10,21 +10,34 @@ import XCTest
 import RxSwift
 @testable import TestNewsApi
 
+// Injection de dépendance à la mitaine (simplement retourner 5 résultats au lieu de 20)
+class NewsAPIServiceTest: NewsAPIService {
+    override init(){
+        super.init()
+        self.maxArticles = 5
+    }
+    
+}
+
+
 class TestNewsApiTests: XCTestCase {
     private let disposeBag = DisposeBag()
    
     func testArticleCount() throws {
+        
+        ArticleProvider.shared = ArticleProvider(service: NewsAPIServiceTest())
+        
         let expectation = self.expectation(description: "fetch posts")
         ArticleProvider.shared.articles.asObservable()
                       .subscribe(onNext: { _ in
-                        if ArticleProvider.shared.articles.value.count == 20 {
+                        if ArticleProvider.shared.articles.value.count == 5 {
                                 XCTAssert(true, "Pass")
                                 expectation.fulfill()
                         }
                       })
                       .disposed(by: disposeBag)
-               
-        self.waitForExpectations(timeout: 15.0, handler: nil)
+        ArticleProvider.shared.reset()
+        self.waitForExpectations(timeout: 150.0, handler: nil)
     }
 
     

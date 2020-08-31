@@ -11,9 +11,17 @@ import RxSwift
 import RxCocoa
 
 class ArticleProvider {
-    static let shared = ArticleProvider()
+    
+    static var shared = ArticleProvider(service:NewsAPIService())
+    
+    let service : INewsServiceAPI
+    
+    // Injection de dépendance faite à la mitaine
+    init(service:INewsServiceAPI) {
+        self.service = service
+    }
     let articles: BehaviorRelay<[Article]> = BehaviorRelay(value: [])
-    let service = NewsAPIService()
+    
     func reset(){
         service.fetchArticles { (result) in
             self.articles.accept(result)
