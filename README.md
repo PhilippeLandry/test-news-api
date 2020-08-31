@@ -14,3 +14,4 @@ TestNewsApiTests::testArticleCount
 
 # Injection de dépendance
 
+Fait à la mitaine, voir TestNewsApiTests::NewsAPIServiceTest
